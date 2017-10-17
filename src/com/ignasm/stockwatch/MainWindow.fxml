@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import com.jfoenix.controls.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="mainBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ignasm.stockwatch.MainController">
+   <children>
+      <HBox fx:id="menuBox" alignment="CENTER_RIGHT" minHeight="40.0" prefHeight="40.0" spacing="50">
+         <children>
+            <JFXButton fx:id="addStockButton" text="Add stock" />
+            <JFXButton fx:id="helpButton" text="Help" />
+         </children>
+      </HBox>
+      <HBox fx:id="profitsBox" alignment="CENTER_RIGHT" minHeight="40.0" prefHeight="40.0" />
+      <VBox fx:id="tableBox" alignment="CENTER_RIGHT" VBox.vgrow="ALWAYS">
+          <HBox fx:id="filterBox" alignment="CENTER_RIGHT" minHeight="40.0" prefHeight="40.0" />
+          <TableView fx:id="dataTable" VBox.vgrow="ALWAYS">
+              <columns>
+                  <TableColumn fx:id="symbolColumn" text="Symbol" />
+                  <TableColumn fx:id="companyColumn" text="Company" />
+                  <TableColumn fx:id="quantityColumn" text="Quantity" />
+                  <TableColumn fx:id="priceColumn" text="Price" />
+                  <TableColumn fx:id="removeColumn" text="Remove" />
+              </columns>
+          </TableView>
+      </VBox>
+   </children>
+</VBox>

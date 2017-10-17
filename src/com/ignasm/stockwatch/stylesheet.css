@@ -1,0 +1,92 @@
+/*
+@font-face {
+    src: url("RobotoRegular.ttf");
+}*/
+
+.button-raised{
+    -fx-padding: 0.6em 0.57em;
+    -fx-font-size: 14px;
+    -jfx-button-type: RAISED;
+    -fx-background-color: WHITE;
+    -fx-pref-width: 100;
+    -fx-text-fill: BLACK;
+}
+
+.data-card {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 15, 0.16, 0, 4);
+}
+
+.table-filter-box {
+    -fx-background-color: white;
+    -fx-padding: 1px;
+}
+
+.data-table {
+    -fx-table-cell-border-color: white;
+    -fx-table-header-border-color: white;
+    -fx-background-color: white;
+}
+
+.data-table .column-header-background {
+    -fx-background-color: white;
+    -fx-border-color: rgba(0, 0, 0, 0.12);
+    -fx-border-width: 0 0 2px 0;
+    -fx-pref-height: 36px;
+    -fx-font-size: 16px;
+}
+
+.data-table .nested-column-header {
+    -fx-background-color: transparent;
+}
+
+.data-table .column-header {
+    -fx-border-width: 0 0 1 0;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.data-table .filler {
+    -fx-border-color: transparent;
+}
+
+.data-table:focused {
+     -fx-background-insets: 0, 0, 0; /* Fix for focused effect on table */
+}
+
+.data-table .column-header-background .label{
+    -fx-background-color: white;
+    -fx-text-fill: rgba(0, 0, 0, 0.54);
+    -fx-font-size: 16px;
+    -fx-font-family: "Roboto";
+    -fx-font-weight: normal;
+}
+
+.data-table .table-cell {
+    -fx-text-fill: rgba(0, 0, 0, 0.87);
+    -fx-font-size: 13px;
+    -fx-font-family: "Roboto";
+}
+
+.main-window {
+    -fx-font-family: "Roboto";
+    -fx-padding: 1em 3em 3em 3em;
+    -fx-background-color: #EEEEEE;
+}
+
+.button-box {
+    -fx-spacing: 1em;
+}
+
+/*
+.table-view .column-header, .table-view .filler {
+    -fx-size: 35;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-color: transparent;
+    -fx-border-color:
+            transparent
+            transparent
+            derive(-fx-base, 80%)
+            transparent;
+    -fx-border-insets: 0 10 1 0;
+}*/
