@@ -8,7 +8,7 @@
     -fx-font-size: 14px;
     -jfx-button-type: RAISED;
     -fx-background-color: WHITE;
-    -fx-pref-width: 100;
+    -fx-pref-width: 150px;
     -fx-text-fill: BLACK;
 }
 
@@ -19,7 +19,8 @@
 
 .table-filter-box {
     -fx-background-color: white;
-    -fx-padding: 1px;
+    -fx-padding: 16px 24px;
+    -fx-pref-height: 60px;
 }
 
 .data-table {
@@ -54,7 +55,7 @@
      -fx-background-insets: 0, 0, 0; /* Fix for focused effect on table */
 }
 
-.data-table .column-header-background .label{
+.data-table .column-header-background .label {
     -fx-background-color: white;
     -fx-text-fill: rgba(0, 0, 0, 0.54);
     -fx-font-size: 16px;
@@ -63,6 +64,7 @@
 }
 
 .data-table .table-cell {
+    -fx-text-alignment: left;
     -fx-text-fill: rgba(0, 0, 0, 0.87);
     -fx-font-size: 13px;
     -fx-font-family: "Roboto";
@@ -78,15 +80,31 @@
     -fx-spacing: 1em;
 }
 
-/*
-.table-view .column-header, .table-view .filler {
-    -fx-size: 35;
-    -fx-border-width: 0 0 1 0;
-    -fx-background-color: transparent;
-    -fx-border-color:
-            transparent
-            transparent
-            derive(-fx-base, 80%)
-            transparent;
-    -fx-border-insets: 0 10 1 0;
-}*/
+.filter-button {
+    -fx-text-fill: #2196F3;
+    -fx-font-size: 14px;
+}
+
+.profits-card {
+    -fx-pref-width: 312px;
+    -fx-fill: rgba(0, 0, 0, 0.87);
+    -fx-padding: 12px;
+}
+
+.profits-label {
+    -fx-font-size: 16px;
+}
+
+.profits-text {
+    -fx-font-size: 14px;
+}
+
+.table-label {
+    -fx-font-size: 20px;
+    -fx-text-fill: rgba(0, 0, 0, 0.87);
+}
+
+.blue-color {
+    -fx-text-fill: #2196F3;
+    -fx-fill: #2196F3;
+}

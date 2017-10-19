@@ -5,13 +5,13 @@ package com.ignasm.stockwatch.data;
  * 20153209
  * PRIf-15/1
  */
-public class StockActivity {
+public class StockEntry {
     Stock stock;
     int id; // id of entry
     double shareChange; // Amounts of stock that got traded (+ if bought shares, - if sold shares)
     double netChange; // The price equivelent of the stock trade. (+ if stock was sold (ideally), - if stock was bought)
 
-    public StockActivity(int id, double share, double net, Stock stock) {
+    public StockEntry(int id, double share, double net, Stock stock) {
         this.id = id;
         shareChange = share;
         netChange = net;
