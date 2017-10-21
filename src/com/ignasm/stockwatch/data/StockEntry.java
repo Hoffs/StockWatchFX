@@ -1,36 +1,46 @@
 package com.ignasm.stockwatch.data;
 
+import javafx.beans.property.SimpleStringProperty;
+
 /**
  * Ignas Maslinskas
  * 20153209
  * PRIf-15/1
  */
 public class StockEntry {
-    Stock stock;
-    int id; // id of entry
-    double shareChange; // Amounts of stock that got traded (+ if bought shares, - if sold shares)
-    double netChange; // The price equivelent of the stock trade. (+ if stock was sold (ideally), - if stock was bought)
+    private int id;
+    private String company;
+    private String symbol;
 
-    public StockEntry(int id, double share, double net, Stock stock) {
+    private final SimpleStringProperty companyProperty;
+    private final SimpleStringProperty symbolProperty;
+
+    public StockEntry(int id, String company, String symbol) {
         this.id = id;
-        shareChange = share;
-        netChange = net;
-        this.stock = stock;
-    }
+        this.company = company;
+        this.symbol = symbol;
 
-    public Stock getStock() {
-        return stock;
+        companyProperty = new SimpleStringProperty(company);
+        symbolProperty = new SimpleStringProperty(symbol);
     }
 
     public int getId() {
         return id;
     }
 
-    public double getShareChange() {
-        return shareChange;
+    public String getCompany() {
+        return company;
     }
 
-    public double getNetChange() {
-        return netChange;
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public String getCompanyProperty() {
+        return companyProperty.get();
+    }
+
+    public String getSymbolProperty() {
+        return symbolProperty.get();
     }
 }

@@ -6,18 +6,18 @@ package com.ignasm.stockwatch.data;
  * PRIf-15/1
  */
 public class StockPriceEntry {
-    private Stock stock;
+    private StockEntry stockEntry;
     private double price;
     private String date; // TODO: CHNAGE TO ACTUAL DATE
 
-    public StockPriceEntry(Stock stock, double price, String date) {
-        this.stock = stock;
+    public StockPriceEntry(StockEntry stockEntry, double price, String date) {
+        this.stockEntry = stockEntry;
         this.price = price;
         this.date = date;
     }
 
-    public Stock getStock() {
-        return stock;
+    public StockEntry getStockEntry() {
+        return stockEntry;
     }
 
     public double getPrice() {

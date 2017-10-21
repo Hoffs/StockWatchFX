@@ -8,16 +8,12 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXComboBox?>
 <VBox fx:id="mainBox" xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.ignasm.stockwatch.AddStockController">
-    <VBox fx:id="stockSymbolBox">
-        <Label fx:id="symbolLabel" text="Simbolis:" />
-        <JFXTextField fx:id="symbolField" />
-    </VBox>
-    <VBox fx:id="stockCompanyBox">
-        <Label fx:id="companyLabel" text="Įmonė:" />
-        <JFXTextField fx:id="companyField" />
+      xmlns:fx="http://javafx.com/fxml">
+    <VBox fx:id="stockBox">
+        <Label fx:id="stockLabel" text="Akcija:" />
+        <JFXTextField fx:id="stockField" editable="false" />
     </VBox>
     <VBox fx:id="stockPriceBox">
         <Label fx:id="priceLabel" text="Akcijos kaina:" />
@@ -28,11 +24,11 @@
         <JFXTextField fx:id="quantityField" />
     </VBox>
     <VBox fx:id="overallPriceBox">
-        <Label fx:id="overallLabel" text="Bendra kaina:" />
+        <Label fx:id="overallLabel" text="Bendras pelnas:" />
         <JFXTextField fx:id="overallField" />
     </VBox>
     <HBox fx:id="buttonsBox" alignment="BOTTOM_RIGHT">
-        <JFXButton fx:id="buttonAccept" text="PRIDĖTI"/>
+        <JFXButton fx:id="buttonAccept" text="PANAIKINTI"/>
         <JFXButton fx:id="buttonClose" text="ATŠAUKTI"/>
     </HBox>
 </VBox>

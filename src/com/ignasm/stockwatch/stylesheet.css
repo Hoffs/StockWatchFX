@@ -108,3 +108,36 @@
     -fx-text-fill: #2196F3;
     -fx-fill: #2196F3;
 }
+
+
+.remove-col {
+    -fx-alignment: center;
+}
+
+.symbol-col {
+    -fx-alignment: center;
+}
+
+.company-col {
+    -fx-alignment: center;
+}
+
+.quantity-col {
+    -fx-alignment: center;
+}
+
+.price-col {
+    -fx-alignment: center;
+}
+
+.remove-button {
+    -fx-background-color: rgba(0, 0, 0, 0.05);
+}
+
+.positive-profit {
+    -fx-fill: #4CAF50;
+}
+
+.negative-profit {
+    -fx-fill: #DD2C00;
+}

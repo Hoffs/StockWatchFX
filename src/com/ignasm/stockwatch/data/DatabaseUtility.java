@@ -16,7 +16,7 @@ class DatabaseUtility {
     private static SQLiteDataSource dataSource;
     private static Connection connection;
 
-    public static Connection getSqlConnection() {
+    private static Connection getSqlConnection() {
         if (connection == null) {
             SQLiteDataSource ds = new SQLiteDataSource();
             ds.setUrl("jdbc:sqlite:data.db");
@@ -45,7 +45,7 @@ class DatabaseUtility {
             preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS stock_price (id INTEGER PRIMARY KEY AUTOINCREMENT, stock REFERENCES stock(id), price REAL, date TEXT)");
             preparedStatement.executeUpdate();
 
-            preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS stock_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, stock REFERENCES stock(id), share_change REAL, net_change REAL, price REAL, date TEXT)");
+            preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS stock_purchases (id INTEGER PRIMARY KEY AUTOINCREMENT, stock REFERENCES stock(id), share_change REAL, net_change REAL, price REAL, date TEXT)");
             preparedStatement.executeUpdate();
 
             /*
