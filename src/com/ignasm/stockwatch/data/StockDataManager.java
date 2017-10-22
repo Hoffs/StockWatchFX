@@ -17,7 +17,6 @@ import java.util.LinkedList;
  */
 public class StockDataManager {
 
-    // TODO: Fix the price part of it.
     public static StockPurchaseEntry[] getSavedStockActivityEntries() {
         StockPurchaseEntry[] data = new StockPurchaseEntry[0];
         String query = "SELECT stock.id s_id, stock.symbol, stock.company_name, MAX(stock_purchases.id) sa_id, SUM(stock_purchases.share_change) share_change, SUM(stock_purchases.net_change) net_change, stock_purchases.price, MAX(stock_purchases.date) date " +
@@ -48,12 +47,35 @@ public class StockDataManager {
         return data;
     }
 
+    public static double getLastPurchasePrice(StockEntry stock) {
+        String query = String.format("SELECT stock_purchases.price FROM stock_purchases WHERE stock_purchases.stock = %d ORDER BY stock_purchases.date DESC LIMIT 1", stock.getId());
+        try {
+            ResultSet resultSet = DatabaseUtility.executeQueryStatement(query);
+            if (resultSet.next()) {
+                return resultSet.getDouble("price");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    public static double getLatestPriceDifference(StockEntry stock) {
+        StockPriceEntry priceEntry = getLatestStockPrice(stock);
+        double latestPrice = 0.0;
+        if (priceEntry != null) {
+            latestPrice = priceEntry.getPrice();
+        }
+        double latestPurchasePrice = getLastPurchasePrice(stock);
+        return (latestPrice - latestPurchasePrice);
+    }
+
     public static String getProfit() {
         String query = "SELECT SUM(stock_purchases.net_change) profit FROM stock_purchases";
         try {
             ResultSet resultSet = DatabaseUtility.executeQueryStatement(query);
             if (resultSet.next()) {
-                return new DecimalFormat("#.00000").format(resultSet.getDouble("profit")).replace(',', '.');
+                return new DecimalFormat("#0.00000").format(resultSet.getDouble("profit")).replace(',', '.');
             }
         } catch (SQLException e) {
             e.printStackTrace();

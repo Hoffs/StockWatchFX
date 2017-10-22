@@ -117,6 +117,8 @@ public class AddStockController {
     }
 
     private void verifySymbol() {
+        if (symbolField.getText().isEmpty()) return;
+
         try {
             Stock currentStock = YahooFinance.get(symbolField.getText());
             if (!currentStock.isValid()) throw new IOException();

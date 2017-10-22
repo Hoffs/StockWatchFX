@@ -8,7 +8,7 @@ package com.ignasm.stockwatch.data;
 public class StockPriceEntry {
     private StockEntry stockEntry;
     private double price;
-    private String date; // TODO: CHNAGE TO ACTUAL DATE
+    private String date; // Maybe change to actual date?
 
     public StockPriceEntry(StockEntry stockEntry, double price, String date) {
         this.stockEntry = stockEntry;

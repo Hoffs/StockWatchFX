@@ -47,8 +47,9 @@ public class MainController {
     public TableView<StockPurchaseEntry> dataTable;
     public TableColumn<StockPurchaseEntry, String> symbolColumn;
     public TableColumn<StockPurchaseEntry, String> companyColumn;
-    public TableColumn<StockPurchaseEntry, Double> priceColumn;
     public TableColumn<StockPurchaseEntry, Double> quantityColumn;
+    public TableColumn<StockPurchaseEntry, Double> priceColumn;
+    public TableColumn<StockPurchaseEntry, Double> changeColumn;
     public TableColumn<StockPurchaseEntry, Node> removeColumn;
 
     public JFXButton addStockButton;
@@ -60,7 +61,6 @@ public class MainController {
 
     @FXML
     public void initialize() {
-
         snackbar = new JFXSnackbar(mainBox);
         setupButtons(helpButton, addStockButton);
         setupCss();
@@ -92,8 +92,6 @@ public class MainController {
         }
     }
 
-
-    // TODO: Pass the data of clicked stock directly.
     private void openRemoveStockWindow(StockPurchaseEntry purchaseEntry) {
         Parent root;
         try {
@@ -147,11 +145,15 @@ public class MainController {
 
         quantityColumn.setResizable(false);
         quantityColumn.getStyleClass().add("quantity-col");
-        quantityColumn.prefWidthProperty().bind(dataTable.widthProperty().multiply(0.2));
+        quantityColumn.prefWidthProperty().bind(dataTable.widthProperty().multiply(0.075));
 
         priceColumn.setResizable(false);
         priceColumn.getStyleClass().add("price-col");
-        priceColumn.prefWidthProperty().bind(dataTable.widthProperty().multiply(0.2));
+        priceColumn.prefWidthProperty().bind(dataTable.widthProperty().multiply(0.1625));
+
+        changeColumn.setResizable(false);
+        changeColumn.getStyleClass().add("price-col");
+        changeColumn.prefWidthProperty().bind(dataTable.widthProperty().multiply(0.1625));
 
         removeColumn.setResizable(false);
         removeColumn.getStyleClass().add("remove-col");
@@ -162,13 +164,16 @@ public class MainController {
         dataTable.setItems(activityEntries);
         symbolColumn.setCellValueFactory(new PropertyValueFactory<>("symbolProperty"));
         companyColumn.setCellValueFactory(new PropertyValueFactory<>("companyProperty"));
+        quantityColumn.setCellValueFactory(new PropertyValueFactory<>("shareChangeProperty"));
         priceColumn.setCellValueFactory(c -> {
             Double price;
             StockPriceEntry stockPriceEntry = StockDataManager.getLatestStockPrice(c.getValue().getStockEntry());
             price = stockPriceEntry != null ? stockPriceEntry.getPrice() : 0;
             return new ReadOnlyObjectWrapper<>(price);
         });
-        quantityColumn.setCellValueFactory(new PropertyValueFactory<>("shareChangeProperty"));
+
+        changeColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(StockDataManager.getLatestPriceDifference(c.getValue().getStockEntry())));
+
         removeColumn.setCellValueFactory(c -> {
             JFXButton button = new JFXButton("Panaikinti");
             button.getStyleClass().add("remove-button");
