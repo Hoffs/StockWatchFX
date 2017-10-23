@@ -60,14 +60,16 @@ public class StockDataManager {
         return 0.0;
     }
 
-    public static double getLatestPriceDifference(StockEntry stock) {
+    public static String getLatestPriceDifference(StockEntry stock) {
         StockPriceEntry priceEntry = getLatestStockPrice(stock);
         double latestPrice = 0.0;
         if (priceEntry != null) {
             latestPrice = priceEntry.getPrice();
         }
         double latestPurchasePrice = getLastPurchasePrice(stock);
-        return (latestPrice - latestPurchasePrice);
+        String formattedString = new DecimalFormat("#0.000").format((latestPrice - latestPurchasePrice)).replace(',', '.');
+        if (!formattedString.startsWith("-")) formattedString = "+".concat(formattedString);
+        return formattedString;
     }
 
     public static String getProfit() {

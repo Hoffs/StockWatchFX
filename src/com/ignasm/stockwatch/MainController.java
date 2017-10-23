@@ -49,7 +49,7 @@ public class MainController {
     public TableColumn<StockPurchaseEntry, String> companyColumn;
     public TableColumn<StockPurchaseEntry, Double> quantityColumn;
     public TableColumn<StockPurchaseEntry, Double> priceColumn;
-    public TableColumn<StockPurchaseEntry, Double> changeColumn;
+    public TableColumn<StockPurchaseEntry, String> changeColumn;
     public TableColumn<StockPurchaseEntry, Node> removeColumn;
 
     public JFXButton addStockButton;
@@ -166,13 +166,19 @@ public class MainController {
         companyColumn.setCellValueFactory(new PropertyValueFactory<>("companyProperty"));
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("shareChangeProperty"));
         priceColumn.setCellValueFactory(c -> {
-            Double price;
-            StockPriceEntry stockPriceEntry = StockDataManager.getLatestStockPrice(c.getValue().getStockEntry());
-            price = stockPriceEntry != null ? stockPriceEntry.getPrice() : 0;
+            Double price = StockDataManager.getLastPurchasePrice(c.getValue().getStockEntry());
             return new ReadOnlyObjectWrapper<>(price);
         });
 
-        changeColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(StockDataManager.getLatestPriceDifference(c.getValue().getStockEntry())));
+        changeColumn.setCellValueFactory(c -> {
+            StockPriceEntry latestStockPrice = StockDataManager.getLatestStockPrice(c.getValue().getStockEntry());
+            String latestPrice = (latestStockPrice != null) ? String.valueOf(latestStockPrice.getPrice()) : "0";
+            String changeString = String.format("%s (%s)",
+                    latestPrice,
+                    StockDataManager.getLatestPriceDifference(c.getValue().getStockEntry())
+            );
+            return new ReadOnlyObjectWrapper<>(changeString);
+        });
 
         removeColumn.setCellValueFactory(c -> {
             JFXButton button = new JFXButton("Panaikinti");
