@@ -18,7 +18,7 @@ public class Main extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("MainWindow.fxml"));
         primaryStage.setTitle("Akcijos");
-        primaryStage.setScene(new Scene(root, 900, 700));
+        primaryStage.setScene(new Scene(root, 960, 700));
         primaryStage.getScene().getStylesheets().add("com/ignasm/stockwatch/stylesheet.css");
         primaryStage.show();
     }

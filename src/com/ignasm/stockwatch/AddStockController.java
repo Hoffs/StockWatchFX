@@ -60,6 +60,7 @@ public class AddStockController {
 
     private String oldSymbolValue = "";
     private Timeline timeline;
+    private String lastCurrency;
 
     @FXML
     public void initialize() {
@@ -122,19 +123,19 @@ public class AddStockController {
         try {
             Stock currentStock = YahooFinance.get(symbolField.getText());
             if (!currentStock.isValid()) throw new IOException();
-            else {
-                System.out.println(currentStock.getQuote().getPrice());
-                fillOtherFields(currentStock);
-            }
+            fillOtherFields(currentStock);
+            // System.out.println(currentStock.getQuote().getPrice());
         } catch (IOException e) {
             System.out.println("Invalid symbol");
             // e.printStackTrace();
         }
-
     }
 
     private void fillOtherFields(Stock stock) {
         companyField.setText(stock.getName());
+        lastCurrency = stock.getCurrency();
+        System.out.println(stock.getCurrency());
+        System.out.println(stock.getCurrency());
         if (stock.getQuote().getPrice() != null) {
             priceField.setText(String.valueOf(stock.getQuote().getPrice()));
         } else {
@@ -155,6 +156,7 @@ public class AddStockController {
                 -1,
                 Integer.parseInt(quantityField.getText()),
                 Double.parseDouble(priceField.getText()),
+                (lastCurrency != null) ? lastCurrency : "USD",
                 -1 * Double.parseDouble(overallField.getText()),
                 stockEntry
         );
@@ -165,6 +167,7 @@ public class AddStockController {
             StockDataManager.insertStockPriceEntry(new StockPriceEntry(
                     purchaseEntry.getStockEntry(),
                     purchaseEntry.getUnitPrice(),
+                    purchaseEntry.getCurrency(),
                     LocalDateTime.now().toString()
             ));
             StockDataManager.insertStockPurchaseEntry(purchaseEntry);

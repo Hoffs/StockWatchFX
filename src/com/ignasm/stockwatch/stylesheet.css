@@ -8,7 +8,6 @@
     -fx-font-size: 14px;
     -jfx-button-type: RAISED;
     -fx-background-color: WHITE;
-    -fx-pref-width: 150px;
     -fx-text-fill: BLACK;
 }
 
@@ -21,6 +20,7 @@
     -fx-background-color: white;
     -fx-padding: 16px 24px;
     -fx-pref-height: 60px;
+    -fx-spacing: 10px;
 }
 
 .data-table {
@@ -86,9 +86,15 @@
 }
 
 .profits-card {
-    -fx-pref-width: 312px;
+    -fx-pref-width: 374px;
     -fx-fill: rgba(0, 0, 0, 0.87);
     -fx-padding: 12px;
+}
+
+.help-window {
+    -fx-font-family: "Roboto";
+    -fx-padding: 2em;
+    -fx-background-color: #fff;
 }
 
 .profits-label {
@@ -134,10 +140,27 @@
     -fx-background-color: rgba(0, 0, 0, 0.05);
 }
 
-.positive-profit {
+.positive-profit, .positive-profit .text {
     -fx-fill: #4CAF50;
 }
 
-.negative-profit {
+.negative-profit, .negative-profit .text {
     -fx-fill: #DD2C00;
+}
+
+.help-text {
+    -fx-font-size: 12px;
+}
+
+.help-header {
+    -fx-font-size: 16px;
+}
+
+.help-title {
+    -fx-font-size: 18px;
+    -fx-pref-height: 20px;
+}
+
+.help-box {
+    -fx-spacing: 5px;
 }

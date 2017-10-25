@@ -1,20 +1,16 @@
 package com.ignasm.stockwatch;
 
 import com.ignasm.stockwatch.data.StockDataManager;
-import com.ignasm.stockwatch.data.StockEntry;
 import com.ignasm.stockwatch.data.StockPriceEntry;
 import com.ignasm.stockwatch.data.StockPurchaseEntry;
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextFormatter;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -64,7 +60,6 @@ public class RemoveStockController {
     public void initialize() {
         quantityField.setTextFormatter(new TextFormatter<>(new IntegerStringConverter()));
         quantityField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println(observable.getValue());
             if (!observable.getValue()) {
                 if (quantityField.getText().isEmpty()) quantityField.setText("0");
                 else if (Integer.parseInt(quantityField.getText()) < 0) quantityField.setText("0");
@@ -118,12 +113,14 @@ public class RemoveStockController {
                     -1,
                     -1 * Integer.parseInt(quantityField.getText()),
                     Double.parseDouble(priceField.getText()),
+                    stockPurchaseEntry.getCurrency(),
                     Double.parseDouble(overallField.getText()),
                     stockPurchaseEntry.getStockEntry()
             );
             StockDataManager.insertStockPriceEntry(new StockPriceEntry(
                     sellEntry.getStockEntry(),
                     sellEntry.getUnitPrice(),
+                    sellEntry.getCurrency(),
                     LocalDateTime.now().toString()
             ));
             StockDataManager.insertStockPurchaseEntry(sellEntry);

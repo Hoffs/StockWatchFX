@@ -6,15 +6,18 @@ import com.ignasm.stockwatch.data.StockPurchaseEntry;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXSnackbar;
+import com.jfoenix.controls.JFXTextField;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -26,6 +29,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class MainController {
     public VBox mainBox;
@@ -40,6 +46,7 @@ public class MainController {
 
     public HBox filterBox;
     public Label tableLabel;
+    public JFXTextField stockFilterField;
     public JFXDatePicker datePickerStart;
     public JFXDatePicker datePickerEnd;
     public JFXButton filterButton;
@@ -48,10 +55,11 @@ public class MainController {
     public TableColumn<StockPurchaseEntry, String> symbolColumn;
     public TableColumn<StockPurchaseEntry, String> companyColumn;
     public TableColumn<StockPurchaseEntry, Double> quantityColumn;
-    public TableColumn<StockPurchaseEntry, Double> priceColumn;
+    public TableColumn<StockPurchaseEntry, String> priceColumn;
     public TableColumn<StockPurchaseEntry, String> changeColumn;
     public TableColumn<StockPurchaseEntry, Node> removeColumn;
 
+    public JFXButton refreshButton;
     public JFXButton addStockButton;
     public JFXButton helpButton;
 
@@ -62,7 +70,6 @@ public class MainController {
     @FXML
     public void initialize() {
         snackbar = new JFXSnackbar(mainBox);
-        setupButtons(helpButton, addStockButton);
         setupCss();
         setupColumns();
         updateSavedStockPrices();
@@ -71,9 +78,27 @@ public class MainController {
         prepareTable();
         updateData();
 
-        addStockButton.setOnAction(e -> openAddStockWindow());
+        refreshButton.setRipplerFill(addStockButton.getRipplerFill());
 
-        StockDataManager.getSavedStockActivityEntries();
+        addStockButton.setOnAction(e -> openAddStockWindow());
+        filterButton.setOnAction(e -> updateUI());
+        refreshButton.setOnAction(e -> updateSavedStockPrices());
+        helpButton.setOnAction(e -> openHelpWindow());
+        StockDataManager.getStockPurchaseEntries();
+    }
+
+    private void openHelpWindow() {
+        Parent root;
+        try {
+            Stage newStage = new Stage();
+            root = FXMLLoader.load(getClass().getResource("HelpWindow.fxml"));
+            newStage.setScene(new Scene(root, 400, 510));
+            newStage.getScene().getStylesheets().add("com/ignasm/stockwatch/stylesheet.css");
+            newStage.initModality(Modality.APPLICATION_MODAL);
+            newStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void openAddStockWindow() {
@@ -112,26 +137,12 @@ public class MainController {
         }
     }
 
-    private void setupButtons(JFXButton... buttons) {
-        for (JFXButton button : buttons) {
-            button.getStyleClass().add("button-raised");
-        }
-    }
-
     private void setupCss() {
-        mainBox.getStyleClass().add("main-window");
-        menuBox.getStyleClass().add("button-box");
-        tableBox.getStyleClass().add("data-card");
-        filterBox.getStyleClass().add("table-filter-box");
-        tableLabel.getStyleClass().add("table-label");
-        dataTable.getStyleClass().add("data-table");
-        filterButton.getStyleClass().add("filter-button");
-        vProfitsBox.getStyleClass().add("data-card");
-        vProfitsBox.getStyleClass().add("profits-card");
+        // vProfitsBox.getStyleClass().add("data-card");
+        // vProfitsBox.getStyleClass().add("profits-card");
         datePickerStart.setDefaultColor(Color.web("#2196F3"));
         datePickerEnd.setDefaultColor(Color.web("#2196F3"));
-        profitLabel.getStyleClass().add("profits-label");
-        profitText.getStyleClass().add("profits-text");
+        stockFilterField.setFocusColor(Color.web("#2196F3"));
     }
 
     private void setupColumns() {
@@ -165,21 +176,42 @@ public class MainController {
         symbolColumn.setCellValueFactory(new PropertyValueFactory<>("symbolProperty"));
         companyColumn.setCellValueFactory(new PropertyValueFactory<>("companyProperty"));
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("shareChangeProperty"));
+
         priceColumn.setCellValueFactory(c -> {
             Double price = StockDataManager.getLastPurchasePrice(c.getValue().getStockEntry());
-            return new ReadOnlyObjectWrapper<>(price);
+            return new ReadOnlyObjectWrapper<>(new DecimalFormat("#0.000").format(price).replace(',', '.').concat(" " + c.getValue().getCurrency()));
         });
 
         changeColumn.setCellValueFactory(c -> {
             StockPriceEntry latestStockPrice = StockDataManager.getLatestStockPrice(c.getValue().getStockEntry());
-            String latestPrice = (latestStockPrice != null) ? String.valueOf(latestStockPrice.getPrice()) : "0";
+            String latestPrice = (latestStockPrice != null) ? String.valueOf(new DecimalFormat("#0.000").format(latestStockPrice.getPrice()).replace(',', '.')) : "0.000";
             String changeString = String.format("%s (%s)",
                     latestPrice,
                     StockDataManager.getLatestPriceDifference(c.getValue().getStockEntry())
             );
-            return new ReadOnlyObjectWrapper<>(changeString);
+            return new ReadOnlyObjectWrapper<>(changeString + " " + c.getValue().getCurrency());
+        });
+        changeColumn.setCellFactory((TableColumn<StockPurchaseEntry, String> param) -> new TableCell<StockPurchaseEntry, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                this.setText(item);
+                this.getStyleClass().remove("negative-profit");
+                this.getStyleClass().remove("positive-profit");
+                if (item != null && item.contains("-")) {
+                    this.getStyleClass().add("negative-profit");
+                } else if (item != null && item.contains("+")) {
+                    this.getStyleClass().add("positive-profit");
+                }
+            }
         });
 
+        changeColumn.setComparator((a, b) -> {
+            String aString = a.split(" ")[1].replace("(", "").replace(")", "").replace("+", "");
+            String bString = b.split(" ")[1].replace("(", "").replace(")", "").replace("+", "");
+
+            return Double.compare(Double.parseDouble(bString), Double.parseDouble(aString));
+        });
         removeColumn.setCellValueFactory(c -> {
             JFXButton button = new JFXButton("Panaikinti");
             button.getStyleClass().add("remove-button");
@@ -190,12 +222,37 @@ public class MainController {
 
     private void updateData() {
         activityEntries.clear();
-        activityEntries.addAll(StockDataManager.getSavedStockActivityEntries());
+        StockPurchaseEntry[] purchaseEntries;
+        if (datePickerStart.getValue() != null && datePickerEnd.getValue() != null) {
+            purchaseEntries = StockDataManager.getStockPurchaseEntries(datePickerStart.getValue().toString(), datePickerEnd.getValue().toString());
+        } else {
+            purchaseEntries = StockDataManager.getStockPurchaseEntries();
+        }
+        for (StockPurchaseEntry entry : purchaseEntries) {
+            if (symbolCompanyFilter(entry.getStockEntry().getSymbol()) || symbolCompanyFilter(entry.getStockEntry().getCompany())) {
+                activityEntries.add(entry);
+            }
+        }
+        // TODO: Fix column sorting after update.
+        // changeColumn.setSortType(changeColumn.getSortType());
+    }
+
+    private boolean symbolCompanyFilter(String name) {
+        return stockFilterField.getText().isEmpty() || name.toLowerCase().contains(stockFilterField.getText().toLowerCase());
+    }
+
+    private boolean dateFilter(String date) {
+        if (datePickerStart.getValue() == null || datePickerEnd.getValue() == null) return true;
+        LocalDate stockLocalDate = LocalDateTime.parse(date).toLocalDate();
+        LocalDate filterStart = datePickerStart.getValue();
+        LocalDate filterEnd = datePickerEnd.getValue();
+
+        return (stockLocalDate.isAfter(filterStart) || stockLocalDate.isEqual(filterStart)) &&
+                (stockLocalDate.isBefore(filterEnd) || stockLocalDate.isEqual(filterEnd));
     }
 
     private void updateProfit() {
         String profits = StockDataManager.getProfit();
-        System.out.println("Profits: " + profits);
         profitText.getStyleClass().remove("negative-profit");
         profitText.getStyleClass().remove("positive-profit");
 
@@ -204,12 +261,20 @@ public class MainController {
         } else {
             profitText.getStyleClass().add("positive-profit");
         }
+
         profits = profits.substring(0, profits.indexOf(".") + 4);
         profitText.setText(profits);
     }
 
     private void updateSavedStockPrices() {
-        StockDataManager.updateStockPrices();
+        new Thread(new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                StockDataManager.updateStockPrices();
+                updateUI();
+                return null;
+            }
+        }).start();
     }
 
     private void updateUI() {

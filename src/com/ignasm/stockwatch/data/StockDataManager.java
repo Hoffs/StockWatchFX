@@ -8,7 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
-import java.util.LinkedList;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Ignas Maslinskas
@@ -17,34 +19,67 @@ import java.util.LinkedList;
  */
 public class StockDataManager {
 
-    public static StockPurchaseEntry[] getSavedStockActivityEntries() {
+    public static StockPurchaseEntry[] getStockPurchaseEntries() {
         StockPurchaseEntry[] data = new StockPurchaseEntry[0];
-        String query = "SELECT stock.id s_id, stock.symbol, stock.company_name, MAX(stock_purchases.id) sa_id, SUM(stock_purchases.share_change) share_change, SUM(stock_purchases.net_change) net_change, stock_purchases.price, MAX(stock_purchases.date) date " +
+        String query = "SELECT stock.id s_id, stock.symbol, stock.company_name, MAX(stock_purchases.id) sa_id, SUM(stock_purchases.share_change) share_change, SUM(stock_purchases.net_change) net_change, stock_purchases.price, MAX(stock_purchases.date) date, stock_purchases.currency " +
                 "FROM stock_purchases " +
                 "JOIN stock ON stock.id = stock_purchases.stock " +
                 "GROUP BY stock.id";
         try {
-            ResultSet resultSet = DatabaseUtility.executeQueryStatement(query);
-            LinkedList<StockPurchaseEntry> activityList = new LinkedList<>();
-            while(resultSet.next()) {
-                StockEntry stockEntry = new StockEntry(resultSet.getInt("s_id"), resultSet.getString("company_name"), resultSet.getString("symbol"));
-                if (resultSet.getDouble("share_change") > 0.0 || resultSet.getDouble("share_change") == -1.0) {
-                    activityList.add(
-                            new StockPurchaseEntry(
-                                    resultSet.getInt("sa_id"),
-                                    resultSet.getInt("share_change"),
-                                    resultSet.getDouble("price"),
-                                    resultSet.getDouble("net_change"),
-                                    stockEntry
-                            )
-                    );
-                }
-            }
-            data = activityList.toArray(new StockPurchaseEntry[activityList.size()]);
+            data = getStockPurchaseEntries(query);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return data;
+    }
+
+    public static StockPurchaseEntry[] getStockPurchaseEntries(String dateFrom, String dateTo) {
+        StockPurchaseEntry[] data = new StockPurchaseEntry[0];
+        String query = "SELECT stock.id s_id, stock.symbol, stock.company_name, MAX(stock_purchases.id) sa_id, SUM(stock_purchases.share_change) share_change, SUM(stock_purchases.net_change) net_change, stock_purchases.price, MAX(stock_purchases.date) date, stock_purchases.currency " +
+                "FROM stock_purchases " +
+                "JOIN stock ON stock.id = stock_purchases.stock " +
+                String.format("WHERE DATE(stock_purchases.date) >= '%s' AND DATE(stock_purchases.date) <= '%s' ", dateFrom, dateTo) +
+                "GROUP BY stock.id ";
+        try {
+            data = getStockPurchaseEntries(query);
+            HashMap<StockPurchaseEntry, Double> purchaseProfitMap = new HashMap<>();
+            for (StockPurchaseEntry entry : data) {
+                String key = getLatestPriceDifference(entry.getStockEntry());
+                Double keyDouble = (key.startsWith("+")) ? Double.valueOf(key.replace("+", "")) : Double.valueOf(key);
+                purchaseProfitMap.put(entry, keyDouble);
+            }
+
+            return purchaseProfitMap.entrySet()
+                    .stream()
+                    .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
+                    .limit(5)
+                    .map(Map.Entry::getKey)
+                    .toArray(StockPurchaseEntry[]::new);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    private static StockPurchaseEntry[] getStockPurchaseEntries(String query) throws SQLException {
+        ResultSet resultSet = DatabaseUtility.executeQueryStatement(query);
+        LinkedList<StockPurchaseEntry> activityList = new LinkedList<>();
+        while(resultSet.next()) {
+            StockEntry stockEntry = new StockEntry(resultSet.getInt("s_id"), resultSet.getString("company_name"), resultSet.getString("symbol"));
+            if (resultSet.getDouble("share_change") > 0.0) {
+                activityList.add(
+                        new StockPurchaseEntry(
+                                resultSet.getInt("sa_id"),
+                                resultSet.getInt("share_change"),
+                                resultSet.getDouble("price"),
+                                resultSet.getString("currency"),
+                                resultSet.getDouble("net_change"),
+                                stockEntry
+                        )
+                );
+            }
+        }
+        return activityList.toArray(new StockPurchaseEntry[activityList.size()]);
     }
 
     public static double getLastPurchasePrice(StockEntry stock) {
@@ -86,11 +121,11 @@ public class StockDataManager {
     }
 
     public static StockPriceEntry getLatestStockPrice(StockEntry stock) {
-        String query = String.format("SELECT stock_price.price, stock_price.date FROM stock_price WHERE stock = %d ORDER BY DATE DESC LIMIT 1", stock.getId());
+        String query = String.format("SELECT stock_price.price, stock_price.currency, stock_price.date FROM stock_price WHERE stock = %d ORDER BY DATE DESC LIMIT 1", stock.getId());
         try {
             ResultSet resultSet = DatabaseUtility.executeQueryStatement(query);
             if (resultSet.next()) {
-                return new StockPriceEntry(stock, resultSet.getDouble("price"), resultSet.getString("date"));
+                return new StockPriceEntry(stock, resultSet.getDouble("price"), resultSet.getString("currency"), resultSet.getString("date"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -116,13 +151,13 @@ public class StockDataManager {
 
     public static StockPriceEntry[] getSavedStockPrices() {
         StockPriceEntry[] data = new StockPriceEntry[0];
-        String query = "SELECT stock_price.price, stock_price.date, stock.id, stock.company_name, stock.symbol FROM stock_price";
+        String query = "SELECT stock_price.price, stock_price.date, stock_price.currency, stock.id, stock.company_name, stock.symbol FROM stock_price";
         try {
             ResultSet resultSet = DatabaseUtility.executeQueryStatement(query);
             LinkedList<StockPriceEntry> entries = new LinkedList<>();
             while (resultSet.next()) {
                 StockEntry stockEntry = new StockEntry(resultSet.getInt("id"), resultSet.getString("company_name"), resultSet.getString("symbol"));
-                entries.add(new StockPriceEntry(stockEntry, resultSet.getDouble("price"), resultSet.getString("date")));
+                entries.add(new StockPriceEntry(stockEntry, resultSet.getDouble("price"), resultSet.getString("currency"), resultSet.getString("date")));
             }
             data = entries.toArray(new StockPriceEntry[entries.size()]);
         } catch (SQLException e) {
@@ -165,12 +200,13 @@ public class StockDataManager {
 
     public static void insertStockPurchaseEntry(StockPurchaseEntry stockPurchaseEntry) {
         String query = String.format(
-                "INSERT INTO stock_purchases(stock, share_change, net_change, price, date) " +
-                        "SELECT %d, %s, %s, %s, '%s'",
+                "INSERT INTO stock_purchases(stock, share_change, net_change, price, currency, date) " +
+                        "SELECT %d, %s, %s, %s, '%s', '%s'",
                 stockPurchaseEntry.getStockEntry().getId(),
                 String.valueOf(stockPurchaseEntry.getShareChange()),
                 String.valueOf(stockPurchaseEntry.getNetChange()),
                 String.valueOf(stockPurchaseEntry.getUnitPrice()),
+                stockPurchaseEntry.getCurrency(),
                 String.valueOf(LocalDateTime.now())
         );
 
@@ -182,10 +218,11 @@ public class StockDataManager {
     }
 
     public static void insertStockPriceEntry(StockPriceEntry stockPriceEntry) {
-        String query = String.format("INSERT INTO stock_price(stock, price, date) " +
-                "SELECT %d, %s, '%s'",
+        String query = String.format("INSERT INTO stock_price(stock, price, currency, date) " +
+                "SELECT %d, %s, '%s', '%s'",
                 stockPriceEntry.getStockEntry().getId(),
                 String.valueOf(stockPriceEntry.getPrice()),
+                stockPriceEntry.getCurrency(),
                 stockPriceEntry.getDate()
         );
         try {
@@ -196,6 +233,7 @@ public class StockDataManager {
     }
 
     public static void updateStockPrices() {
+
         StockEntry[] stockEntries = getSavedStocks();
         for (StockEntry entry : stockEntries) {
             try {
@@ -203,10 +241,12 @@ public class StockDataManager {
                 insertStockPriceEntry(new StockPriceEntry(
                         entry,
                         Double.parseDouble(stock.getQuote().getPrice().toString()),
+                        stock.getCurrency(),
                         LocalDateTime.now().toString()
                 ));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Couldn't get stock information.");
+                // e.printStackTrace();
             }
         }
     }

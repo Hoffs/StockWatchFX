@@ -16,7 +16,7 @@ class DatabaseUtility {
     private static SQLiteDataSource dataSource;
     private static Connection connection;
 
-    private static Connection getSqlConnection() {
+    private synchronized static Connection getSqlConnection() {
         if (connection == null) {
             SQLiteDataSource ds = new SQLiteDataSource();
             ds.setUrl("jdbc:sqlite:data.db");
@@ -33,7 +33,7 @@ class DatabaseUtility {
         }
     }
 
-    private static void prepareDatabase(Connection connection) {
+    private synchronized static void prepareDatabase(Connection connection) {
         try {
             connection.setAutoCommit(false);
 
@@ -42,10 +42,10 @@ class DatabaseUtility {
             preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS stock (id INTEGER PRIMARY KEY AUTOINCREMENT, company_name TEXT, symbol TEXT)");
             preparedStatement.executeUpdate();
 
-            preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS stock_price (id INTEGER PRIMARY KEY AUTOINCREMENT, stock REFERENCES stock(id), price REAL, date TEXT)");
+            preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS stock_price (id INTEGER PRIMARY KEY AUTOINCREMENT, stock REFERENCES stock(id), price REAL, currency TEXT, date TEXT)");
             preparedStatement.executeUpdate();
 
-            preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS stock_purchases (id INTEGER PRIMARY KEY AUTOINCREMENT, stock REFERENCES stock(id), share_change REAL, net_change REAL, price REAL, date TEXT)");
+            preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS stock_purchases (id INTEGER PRIMARY KEY AUTOINCREMENT, stock REFERENCES stock(id), share_change REAL, net_change REAL, price REAL, currency TEXT, date TEXT)");
             preparedStatement.executeUpdate();
 
             /*
@@ -59,7 +59,7 @@ class DatabaseUtility {
         }
     }
 
-    public static int executeUpdateStatement(String query) throws SQLException {
+    synchronized static int executeUpdateStatement(String query) throws SQLException {
         Connection connection = getSqlConnection();
         connection.setAutoCommit(false);
         PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -68,7 +68,7 @@ class DatabaseUtility {
         return result;
     }
 
-    public static ResultSet executeQueryStatement(String query) throws SQLException {
+    synchronized static ResultSet executeQueryStatement(String query) throws SQLException {
         Connection connection = getSqlConnection();
         connection.setAutoCommit(false);
         PreparedStatement preparedStatement = connection.prepareStatement(query);

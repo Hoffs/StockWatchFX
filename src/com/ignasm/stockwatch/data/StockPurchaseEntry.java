@@ -14,14 +14,16 @@ public class StockPurchaseEntry {
     private int shareChange; // Amounts of stockEntry that got traded (+ if bought shares, - if sold shares)
     private double netChange; // The price equivelent of the stockEntry trade. (+ if stockEntry was sold (ideally), - if stockEntry was bought)
     private double unitPrice;
+    private String currency;
 
     private final SimpleIntegerProperty shareChangeProperty;
     private final SimpleDoubleProperty netChangeProperty;
     private final SimpleDoubleProperty unitPriceProperty;
 
-    public StockPurchaseEntry(int id, int shareAmount, double unitPrice, double net, StockEntry stockEntry) {
+    public StockPurchaseEntry(int id, int shareAmount, double unitPrice, String currency, double net, StockEntry stockEntry) {
         this.id = id;
         this.unitPrice = unitPrice;
+        this.currency = currency;
         this.stockEntry = stockEntry;
         shareChange = shareAmount;
         netChange = net;
@@ -50,10 +52,10 @@ public class StockPurchaseEntry {
     public void setStockEntry(StockEntry stockEntry) {
         this.stockEntry = stockEntry;
     }
+
     public int getShareChangeProperty() {
         return shareChangeProperty.get();
     }
-
     public double getNetChangeProperty() {
         return netChangeProperty.get();
     }
@@ -72,5 +74,9 @@ public class StockPurchaseEntry {
 
     public double getUnitPrice() {
         return unitPrice;
+    }
+
+    public String getCurrency() {
+        return currency;
     }
 }
