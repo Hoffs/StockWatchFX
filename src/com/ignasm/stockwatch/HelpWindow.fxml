@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <VBox fx:id="helpVerticalBox" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.ignasm.stockwatch.HelpController" spacing="10.0" styleClass="help-window">
     <Label text="Pagalba" styleClass="help-title"/>
     <VBox alignment="CENTER_LEFT" styleClass="help-box">
         <Label text="Pagrindinis langas" styleClass="help-header"/>
-        <Text wrappingWidth="352" text="Pagrindiniame programos lange yra pateiktas akcijų sąrašas, bendras pelnas ir mygtukai pasiekti pagalbai, akcijų pridėjimui ir panaikinimui." styleClass="help-text"/>
+        <Text wrappingWidth="352" text="Pagrindiniame programos lange yra pateiktas akcijų sąrašas, bendras pelnas ir mygtukai pasiekti pagalbai, filtruoti akcijas, akcijų pridėjimui ir panaikinimui." styleClass="help-text"/>
     </VBox>
     <VBox alignment="CENTER_LEFT" styleClass="help-box">
         <Label text="Pelnas" styleClass="help-header"/>
         <Text wrappingWidth="352" text="Bendras pelnas yra skaičiuojamas sudedant gaunamą pelna pridėdant (neigiamas pelnas) ir panaikinant (teigiamas pelnas) akcijas." styleClass="help-text"/>
+    </VBox>
+    <VBox alignment="CENTER_LEFT" styleClass="help-box">
+        <Label text="Filtravimas" styleClass="help-header"/>
+        <Text wrappingWidth="352" text="Turimas akcijas galima filtruoti įvedus įmonės pavadinimą arba simbolį. Taip pat įvedus pradžios ir pabaigos datas galima gauti penkias pelningiausias akcijas įsigytas pasirinktu laikotarpiu." styleClass="help-text"/>
     </VBox>
     <VBox alignment="CENTER_LEFT" styleClass="help-box">
         <Label text="Pridėti akciją" styleClass="help-header"/>

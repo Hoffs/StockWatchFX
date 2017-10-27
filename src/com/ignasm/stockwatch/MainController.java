@@ -5,7 +5,6 @@ import com.ignasm.stockwatch.data.StockPriceEntry;
 import com.ignasm.stockwatch.data.StockPurchaseEntry;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
-import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXTextField;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -21,6 +20,8 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -30,8 +31,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class MainController {
     public VBox mainBox;
@@ -62,14 +61,17 @@ public class MainController {
     public JFXButton refreshButton;
     public JFXButton addStockButton;
     public JFXButton helpButton;
+    public ImageView logoImage;
 
     private ObservableList<StockPurchaseEntry> activityEntries = FXCollections.observableArrayList();
 
-    private JFXSnackbar snackbar; //         snackbar.enqueue();
+    // private JFXSnackbar snackbar; //         snackbar.enqueue();
+    private Thread stockUpdateThread;
 
     @FXML
     public void initialize() {
-        snackbar = new JFXSnackbar(mainBox);
+        // snackbar = new JFXSnackbar(mainBox);
+        setupLogoImage();
         setupCss();
         setupColumns();
         updateSavedStockPrices();
@@ -87,12 +89,19 @@ public class MainController {
         StockDataManager.getStockPurchaseEntries();
     }
 
+    private void setupLogoImage() {
+        logoImage.setImage(new Image(getClass().getResourceAsStream("logo120.gif")));
+        logoImage.setFitHeight(120.0);
+
+        logoImage.setFitWidth(120.0);
+    }
+
     private void openHelpWindow() {
         Parent root;
         try {
             Stage newStage = new Stage();
             root = FXMLLoader.load(getClass().getResource("HelpWindow.fxml"));
-            newStage.setScene(new Scene(root, 400, 510));
+            newStage.setScene(new Scene(root, 400, 600));
             newStage.getScene().getStylesheets().add("com/ignasm/stockwatch/stylesheet.css");
             newStage.initModality(Modality.APPLICATION_MODAL);
             newStage.show();
@@ -138,8 +147,6 @@ public class MainController {
     }
 
     private void setupCss() {
-        // vProfitsBox.getStyleClass().add("data-card");
-        // vProfitsBox.getStyleClass().add("profits-card");
         datePickerStart.setDefaultColor(Color.web("#2196F3"));
         datePickerEnd.setDefaultColor(Color.web("#2196F3"));
         stockFilterField.setFocusColor(Color.web("#2196F3"));
@@ -233,22 +240,10 @@ public class MainController {
                 activityEntries.add(entry);
             }
         }
-        // TODO: Fix column sorting after update.
-        // changeColumn.setSortType(changeColumn.getSortType());
     }
 
     private boolean symbolCompanyFilter(String name) {
         return stockFilterField.getText().isEmpty() || name.toLowerCase().contains(stockFilterField.getText().toLowerCase());
-    }
-
-    private boolean dateFilter(String date) {
-        if (datePickerStart.getValue() == null || datePickerEnd.getValue() == null) return true;
-        LocalDate stockLocalDate = LocalDateTime.parse(date).toLocalDate();
-        LocalDate filterStart = datePickerStart.getValue();
-        LocalDate filterEnd = datePickerEnd.getValue();
-
-        return (stockLocalDate.isAfter(filterStart) || stockLocalDate.isEqual(filterStart)) &&
-                (stockLocalDate.isBefore(filterEnd) || stockLocalDate.isEqual(filterEnd));
     }
 
     private void updateProfit() {
@@ -267,14 +262,19 @@ public class MainController {
     }
 
     private void updateSavedStockPrices() {
-        new Thread(new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                StockDataManager.updateStockPrices();
-                updateUI();
-                return null;
-            }
-        }).start();
+        if (stockUpdateThread == null || !stockUpdateThread.isAlive()) {
+            stockUpdateThread = new Thread(new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    StockDataManager.updateStockPrices();
+                    updateUI();
+                    return null;
+                }
+            });
+            stockUpdateThread.start();
+        } else {
+            System.out.println("Update already running...");
+        }
     }
 
     private void updateUI() {
