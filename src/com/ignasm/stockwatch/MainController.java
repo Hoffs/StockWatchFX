@@ -90,7 +90,7 @@ public class MainController {
     }
 
     private void setupLogoImage() {
-        logoImage.setImage(new Image(getClass().getResourceAsStream("logo120.gif")));
+        logoImage.setImage(new Image(getClass().getResourceAsStream("resources/logo120.gif")));
         logoImage.setFitHeight(120.0);
 
         logoImage.setFitWidth(120.0);
@@ -100,9 +100,10 @@ public class MainController {
         Parent root;
         try {
             Stage newStage = new Stage();
-            root = FXMLLoader.load(getClass().getResource("HelpWindow.fxml"));
-            newStage.setScene(new Scene(root, 400, 600));
-            newStage.getScene().getStylesheets().add("com/ignasm/stockwatch/stylesheet.css");
+            root = FXMLLoader.load(getClass().getResource("resources/HelpWindow.fxml"));
+            newStage.setScene(new Scene(root, 400, 540));
+            newStage.getScene().getStylesheets().add("com/ignasm/stockwatch/resources/stylesheet.css");
+            newStage.getIcons().add(new Image(getClass().getResourceAsStream("resources/logo40.png")));
             newStage.initModality(Modality.APPLICATION_MODAL);
             newStage.show();
         } catch (IOException e) {
@@ -114,9 +115,9 @@ public class MainController {
         Parent root;
         try {
             Stage newStage = new Stage();
-            root = FXMLLoader.load(getClass().getResource("AddStock.fxml"));
+            root = FXMLLoader.load(getClass().getResource("resources/AddStock.fxml"));
             newStage.setScene(new Scene(root, 300, 330));
-            newStage.getScene().getStylesheets().add("com/ignasm/stockwatch/stockStylesheet.css");
+            newStage.getScene().getStylesheets().add("com/ignasm/stockwatch/resources/stockStylesheet.css");
             newStage.setOnHiding(e -> updateUI());
             newStage.initModality(Modality.APPLICATION_MODAL);
             newStage.show();
@@ -129,7 +130,7 @@ public class MainController {
     private void openRemoveStockWindow(StockPurchaseEntry purchaseEntry) {
         Parent root;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("RemoveStock.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("resources/RemoveStock.fxml"));
             RemoveStockController controller = new RemoveStockController(purchaseEntry);
             loader.setController(controller);
 
@@ -137,7 +138,7 @@ public class MainController {
             root = loader.load();
 
             newStage.setScene(new Scene(root, 300, 330));
-            newStage.getScene().getStylesheets().add("com/ignasm/stockwatch/stockStylesheet.css");
+            newStage.getScene().getStylesheets().add("com/ignasm/stockwatch/resources/stockStylesheet.css");
             newStage.setOnHiding(e -> updateUI());
             newStage.initModality(Modality.APPLICATION_MODAL);
             newStage.show();
