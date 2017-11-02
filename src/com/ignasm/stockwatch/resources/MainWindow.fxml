@@ -46,7 +46,7 @@
                 <TableColumn fx:id="symbolColumn" text="Simbolis"/>
                 <TableColumn fx:id="companyColumn" text="Įmonė"/>
                 <TableColumn fx:id="quantityColumn" text="Kiekis"/>
-                <TableColumn fx:id="priceColumn" text="Kaina (USD)"/>
+                <TableColumn fx:id="priceColumn" text="Kaina"/>
                 <TableColumn fx:id="changeColumn" text="Pokytis"/>
                 <TableColumn fx:id="removeColumn" text="Panaikinti"/>
             </columns>
