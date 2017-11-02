@@ -233,21 +233,42 @@ public class StockDataManager {
     }
 
     public static void updateStockPrices() {
-
         StockEntry[] stockEntries = getSavedStocks();
         for (StockEntry entry : stockEntries) {
-            try {
-                Stock stock = YahooFinance.get(entry.getSymbol());
-                insertStockPriceEntry(new StockPriceEntry(
-                        entry,
-                        Double.parseDouble(stock.getQuote().getPrice().toString()),
-                        stock.getCurrency(),
-                        LocalDateTime.now().toString()
-                ));
-            } catch (IOException e) {
-                System.out.println("Couldn't get stock information.");
-                // e.printStackTrace();
-            }
+            updateStockPrice(entry);
+        }
+    }
+
+    private static void updateStockPrice(StockEntry entry) {
+        try {
+            Stock stock = YahooFinance.get(entry.getSymbol());
+            System.out.println("hist = " + stock.getHistory().get(0));
+            insertStockPriceEntry(new StockPriceEntry(
+                    entry,
+                    Double.parseDouble(stock.getQuote().getPrice().toString()),
+                    stock.getCurrency(),
+                    LocalDateTime.now().toString()
+            ));
+        } catch (IOException e) {
+            System.out.println("Couldn't get stock information. Using fallback...");
+            // e.printStackTrace();
+            updateStockPriceFallback(entry);
+        }
+    }
+
+    private static void updateStockPriceFallback(StockEntry entry) {
+        try {
+            SimpleStock stock = YahooFinanceWrapper.getSimpleStock(entry.getSymbol());
+            insertStockPriceEntry(new StockPriceEntry(
+                    entry,
+                    Double.parseDouble(stock.getPrice()),
+                    stock.getCurrency(),
+                    LocalDateTime.now().toString()
+            ));
+            System.out.println("Fallback completed!");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Couldn't get stock information in fallback.");
         }
     }
 }

@@ -1,9 +1,6 @@
 package com.ignasm.stockwatch;
 
-import com.ignasm.stockwatch.data.StockDataManager;
-import com.ignasm.stockwatch.data.StockEntry;
-import com.ignasm.stockwatch.data.StockPriceEntry;
-import com.ignasm.stockwatch.data.StockPurchaseEntry;
+import com.ignasm.stockwatch.data.*;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import javafx.animation.KeyFrame;
@@ -126,22 +123,37 @@ public class AddStockController {
             fillOtherFields(currentStock);
             // System.out.println(currentStock.getQuote().getPrice());
         } catch (IOException e) {
-            System.out.println("Invalid symbol");
+            System.out.println("Failed YahooFinanceAPI. Using fallback...");
             // e.printStackTrace();
+        }
+
+        try {
+            SimpleStock currentStock = YahooFinanceWrapper.getSimpleStock(symbolField.getText());
+            fillOtherFields(currentStock);
+            System.out.println("Fallback completed!");
+        } catch (IOException e) {
+            System.out.println("Failed YahooFinanceWrapper");
+            e.printStackTrace();
         }
     }
 
     private void fillOtherFields(Stock stock) {
         companyField.setText(stock.getName());
         lastCurrency = stock.getCurrency();
-        System.out.println(stock.getCurrency());
-        System.out.println(stock.getCurrency());
         if (stock.getQuote().getPrice() != null) {
             priceField.setText(String.valueOf(stock.getQuote().getPrice()));
         } else {
             priceField.setText("0");
         }
         quantityField.setText("1");
+        updateOverallPrice();
+    }
+
+    private void fillOtherFields(SimpleStock stock) {
+        companyField.setText(stock.getCompanyName());
+        lastCurrency = stock.getCurrency();
+        quantityField.setText("1");
+        priceField.setText(stock.getPrice());
         updateOverallPrice();
     }
 

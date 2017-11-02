@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AkcijosPortfelisFX.iml" filepath="$PROJECT_DIR$/AkcijosPortfelisFX.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../yahoofinance-api/YahooFinanceAPI.iml" filepath="$PROJECT_DIR$/../yahoofinance-api/YahooFinanceAPI.iml" />
     </modules>
   </component>
 </project>
