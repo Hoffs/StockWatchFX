@@ -16,9 +16,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="AkcijosPortfelisFX" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="AkcijosPortfelisFX" target="1.8" />
       <module name="YahooFinanceAPI" target="1.6" />
     </bytecodeTargetLevel>
   </component>
