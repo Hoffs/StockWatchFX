@@ -242,7 +242,6 @@ public class StockDataManager {
     private static void updateStockPrice(StockEntry entry) {
         try {
             Stock stock = YahooFinance.get(entry.getSymbol());
-            System.out.println("hist = " + stock.getHistory().get(0));
             insertStockPriceEntry(new StockPriceEntry(
                     entry,
                     Double.parseDouble(stock.getQuote().getPrice().toString()),

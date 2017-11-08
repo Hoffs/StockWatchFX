@@ -1,8 +1,6 @@
 <component name="libraryTable">
   <library name="StockWatchLibs">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/fontawesomefx-8.9.jar!/" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC />
     <SOURCES />
   </library>

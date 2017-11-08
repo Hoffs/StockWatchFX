@@ -119,21 +119,24 @@ public class AddStockController {
 
         try {
             Stock currentStock = YahooFinance.get(symbolField.getText());
-            if (!currentStock.isValid()) throw new IOException();
+            if (currentStock == null || !currentStock.isValid()) throw new IOException();
             fillOtherFields(currentStock);
             // System.out.println(currentStock.getQuote().getPrice());
         } catch (IOException e) {
             System.out.println("Failed YahooFinanceAPI. Using fallback...");
             // e.printStackTrace();
+            verifySymbolFallback();
         }
+    }
 
+    private void verifySymbolFallback() {
         try {
             SimpleStock currentStock = YahooFinanceWrapper.getSimpleStock(symbolField.getText());
             fillOtherFields(currentStock);
             System.out.println("Fallback completed!");
         } catch (IOException e) {
             System.out.println("Failed YahooFinanceWrapper");
-            e.printStackTrace();
+            // e.printStackTrace();
         }
     }
 
