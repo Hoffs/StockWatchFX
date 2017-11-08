@@ -14,11 +14,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Font.loadFont(getClass().getResourceAsStream("RobotoRegular.ttf"), 16);
+        Font.loadFont(getClass().getClassLoader().getResourceAsStream("RobotoRegular.ttf"), 16);
         Locale.setDefault(new Locale("lt", "LT"));
-
-        Parent root = FXMLLoader.load(getClass().getResource("MainWindow.fxml"));
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("logo40.png")));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("MainWindow.fxml"));
+        primaryStage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("logo40.png")));
         primaryStage.setTitle("Stock Watch");
         primaryStage.setScene(new Scene(root, 960, 700));
         primaryStage.getScene().getStylesheets().add("stylesheet.css");
