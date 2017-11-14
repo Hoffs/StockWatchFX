@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="AkcijosPortfelisFX:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/AkcijosPortfelisFX_jar</output-path>
+    <root id="archive" name="AkcijosPortfelisFX.jar">
+      <element id="module-output" name="AkcijosPortfelisFX" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/fontawesomefx-8.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/jfoenix/jfoenix/1.9.0/jfoenix-1.9.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/xerial/sqlite-jdbc/3.20.1/sqlite-jdbc-3.20.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-databind/2.9.0/jackson-databind-2.9.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/yahoofinance-api/YahooFinanceAPI/3.12.1/YahooFinanceAPI-3.12.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.2/gson-2.8.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-core/2.9.0/jackson-core-2.9.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-annotations/2.9.0/jackson-annotations-2.9.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
