@@ -52,7 +52,7 @@ public class RemoveStockController {
     private Timeline timeline;
     private StockPurchaseEntry stockPurchaseEntry;
 
-    public RemoveStockController(StockPurchaseEntry purchaseEntry) {
+    RemoveStockController(StockPurchaseEntry purchaseEntry) {
         this.stockPurchaseEntry = purchaseEntry;
     }
 
@@ -80,7 +80,6 @@ public class RemoveStockController {
 
         stockField.setText(stockPurchaseEntry.getStockEntry().getSymbol() + " " + stockPurchaseEntry.getStockEntry().getCompany());
         priceField.setText(String.valueOf(stockPurchaseEntry.getUnitPrice()));
-        System.out.println("Share change - " + stockPurchaseEntry.getShareChangeProperty());
         quantityField.setText(String.valueOf(stockPurchaseEntry.getShareChange()));
         updateOverallPrice();
     }
