@@ -56,7 +56,6 @@ public class RemoveStockController {
     private Label errorMessage;
 
     public RemoveStockController(StockPurchaseEntry purchaseEntry) {
-    RemoveStockController(StockPurchaseEntry purchaseEntry) {
         this.stockPurchaseEntry = purchaseEntry;
     }
 
