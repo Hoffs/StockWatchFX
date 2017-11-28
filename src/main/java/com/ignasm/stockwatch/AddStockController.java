@@ -54,6 +54,7 @@ public class AddStockController {
     public HBox buttonsBox;
     public JFXButton buttonAccept;
     public JFXButton buttonClose;
+    public Label errorMessage;
 
     private String oldSymbolValue = "";
     private Timeline timeline;
@@ -70,6 +71,7 @@ public class AddStockController {
         symbolField.setOnKeyReleased(e -> verifySymbolEvent());
         priceField.setOnKeyReleased(e -> updateOverallPrice());
         quantityField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (quantityField.getText().length() == 0) return;
             if (Integer.parseInt(quantityField.getText()) < 0) quantityField.setText("0");
             updateOverallPrice();
         });
@@ -121,10 +123,7 @@ public class AddStockController {
             Stock currentStock = YahooFinance.get(symbolField.getText());
             if (currentStock == null || !currentStock.isValid()) throw new IOException();
             fillOtherFields(currentStock);
-            // System.out.println(currentStock.getQuote().getPrice());
         } catch (IOException e) {
-            System.out.println("Failed YahooFinanceAPI. Using fallback...");
-            // e.printStackTrace();
             verifySymbolFallback();
         }
     }
@@ -133,10 +132,7 @@ public class AddStockController {
         try {
             SimpleStock currentStock = YahooFinanceWrapper.getSimpleStock(symbolField.getText());
             fillOtherFields(currentStock);
-            System.out.println("Fallback completed!");
-        } catch (IOException e) {
-            System.out.println("Failed YahooFinanceWrapper");
-            // e.printStackTrace();
+        } catch (IOException ignored) {
         }
     }
 
@@ -156,11 +152,18 @@ public class AddStockController {
         companyField.setText(stock.getCompanyName());
         lastCurrency = stock.getCurrency();
         quantityField.setText("1");
-        priceField.setText(stock.getPrice());
+        priceField.setText((stock.getPrice() != null) ? stock.getPrice() : "0");
         updateOverallPrice();
     }
 
-    private void saveStock() {
+    private boolean saveStock() {
+        if (companyField.getText().isEmpty() ||
+                symbolField.getText().isEmpty() ||
+                priceField.getText().isEmpty() ||
+                quantityField.getText().isEmpty()) {
+            errorMessage.setText("Neužpildyti laukai");
+            return false;
+        }
         StockEntry stockEntry = new StockEntry(
                 -1,
                 companyField.getText(),
@@ -186,14 +189,17 @@ public class AddStockController {
                     LocalDateTime.now().toString()
             ));
             StockDataManager.insertStockPurchaseEntry(purchaseEntry);
+            return true;
         } else {
             System.out.println("Stock wasn't inserted?");
         }
+        return false;
     }
 
     private void onSave(ActionEvent event) {
-        saveStock();
-        onClose(event);
+        if (saveStock()) {
+            onClose(event);
+        }
     }
 
     private void onClose(ActionEvent event) {

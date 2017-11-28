@@ -3,7 +3,9 @@ package com.ignasm.stockwatch.data;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -37,9 +39,12 @@ public class YahooFinanceWrapper {
         Map<String, String> data = new HashMap<>();
         String contents = getContents(getYahooURL(symbol));
         JsonObject jsonObject = new JsonParser().parse(contents).getAsJsonObject().getAsJsonObject("quoteResponse").getAsJsonArray("result").get(0).getAsJsonObject();
-        data.put("currency", jsonObject.get("currency").getAsString());
-        data.put("company", jsonObject.get("shortName").getAsString());
-        data.put("price", jsonObject.get("regularMarketPrice").getAsJsonObject().get("raw").getAsString());
+        try {
+            data.put("currency", jsonObject.get("currency").getAsString());
+            data.put("company", jsonObject.get("shortName").getAsString());
+            data.put("price", jsonObject.get("regularMarketPrice").getAsJsonObject().get("raw").getAsString());
+        } catch (NullPointerException ignored) {
+        }
         return data;
     }
 

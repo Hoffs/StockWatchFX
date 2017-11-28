@@ -116,7 +116,7 @@ public class MainController {
         try {
             Stage newStage = new Stage();
             root = FXMLLoader.load(getClass().getClassLoader().getResource("AddStock.fxml"));
-            newStage.setScene(new Scene(root, 300, 330));
+            newStage.setScene(new Scene(root, 300, 360));
             newStage.getScene().getStylesheets().add("stockStylesheet.css");
             newStage.setOnHiding(e -> updateUI());
             newStage.initModality(Modality.APPLICATION_MODAL);
@@ -137,7 +137,7 @@ public class MainController {
             Stage newStage = new Stage();
             root = loader.load();
 
-            newStage.setScene(new Scene(root, 300, 330));
+            newStage.setScene(new Scene(root, 300, 310));
             newStage.getScene().getStylesheets().add("stockStylesheet.css");
             newStage.setOnHiding(e -> updateUI());
             newStage.initModality(Modality.APPLICATION_MODAL);

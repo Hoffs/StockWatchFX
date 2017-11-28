@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.*?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <VBox fx:id="mainBox" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml">
+    <Label fx:id="errorMessage" textFill="darkred"/>
     <VBox fx:id="stockBox">
         <Label fx:id="stockLabel" text="Akcija:" />
         <JFXTextField fx:id="stockField" editable="false" />

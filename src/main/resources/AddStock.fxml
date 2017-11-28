@@ -6,6 +6,7 @@
 <VBox fx:id="mainBox" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.ignasm.stockwatch.AddStockController">
+    <Label fx:id="errorMessage" textFill="darkred"/>
     <VBox fx:id="stockSymbolBox">
         <Label fx:id="symbolLabel" text="Simbolis:" />
         <JFXTextField fx:id="symbolField" />

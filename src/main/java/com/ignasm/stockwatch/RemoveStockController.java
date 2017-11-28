@@ -52,6 +52,9 @@ public class RemoveStockController {
     private Timeline timeline;
     private StockPurchaseEntry stockPurchaseEntry;
 
+    @FXML
+    private Label errorMessage;
+
     public RemoveStockController(StockPurchaseEntry purchaseEntry) {
         this.stockPurchaseEntry = purchaseEntry;
     }
@@ -107,7 +110,14 @@ public class RemoveStockController {
         }
     }
 
-    private void saveStock() {
+    private boolean saveStock() {
+        if (stockPurchaseEntry == null ||
+                quantityField.getText().isEmpty() ||
+                priceField.getText().isEmpty()) {
+            errorMessage.setText("Neužpildyti laukai");
+            return false;
+        }
+
         if (stockPurchaseEntry != null) {
             StockPurchaseEntry sellEntry = new StockPurchaseEntry(
                     -1,
@@ -124,12 +134,15 @@ public class RemoveStockController {
                     LocalDateTime.now().toString()
             ));
             StockDataManager.insertStockPurchaseEntry(sellEntry);
+            return true;
         }
+        return false;
     }
 
     private void onSave(ActionEvent event) {
-        saveStock();
-        onClose(event);
+        if (saveStock()) {
+            onClose(event);
+        }
     }
 
     private void onClose(ActionEvent event) {
