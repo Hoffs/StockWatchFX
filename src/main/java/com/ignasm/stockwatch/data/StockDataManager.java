@@ -233,9 +233,9 @@ public class StockDataManager {
     }
 
     public static void updateStockPrices() {
-        StockEntry[] stockEntries = getSavedStocks();
-        for (StockEntry entry : stockEntries) {
-            updateStockPrice(entry);
+        StockPurchaseEntry[] stockEntries = getStockPurchaseEntries();
+        for (StockPurchaseEntry entry : stockEntries) {
+            updateStockPrice(entry.getStockEntry());
         }
     }
 
