@@ -11,16 +11,17 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.converter.BigDecimalStringConverter;
-import javafx.util.converter.IntegerStringConverter;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 /**
@@ -54,7 +55,7 @@ public class AddStockController {
     public HBox buttonsBox;
     public JFXButton buttonAccept;
     public JFXButton buttonClose;
-    public Label errorMessage;
+    public Pane mainPane;
 
     private String oldSymbolValue = "";
     private Timeline timeline;
@@ -62,29 +63,75 @@ public class AddStockController {
 
     @FXML
     public void initialize() {
+        mainBox.prefHeightProperty().bind(mainPane.heightProperty());
+        mainBox.prefWidthProperty().bind(mainPane.widthProperty());
         buttonsBox.getStyleClass().add("button-box");
 
-        quantityField.setTextFormatter(new TextFormatter<>(new IntegerStringConverter()));
-        priceField.setTextFormatter(new TextFormatter<>(new BigDecimalStringConverter()));
         overallField.setTextFormatter(new TextFormatter<>(new BigDecimalStringConverter()));
 
         symbolField.setOnKeyReleased(e -> verifySymbolEvent());
         priceField.setOnKeyReleased(e -> updateOverallPrice());
         quantityField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (quantityField.getText().length() == 0) return;
-            if (Integer.parseInt(quantityField.getText()) < 0) quantityField.setText("0");
+            if (BigInteger.valueOf(Long.parseLong(quantityField.getText())).compareTo(BigInteger.ZERO) < 0)
+                quantityField.setText("0");
             updateOverallPrice();
         });
 
         buttonClose.setOnAction(this::onClose);
         buttonAccept.setOnAction(this::onSave);
+
+        addValidations();
+    }
+
+    private void addValidations() {
+        priceField.textProperty().addListener((observable, oldValue, newValue) ->
+                priceField.setText(ErrorManager.checkPriceField(priceField.getText())));
+        quantityField.textProperty().addListener((observable, oldValue, newValue) ->
+                quantityField.setText(ErrorManager.checkQuantityField(quantityField.getText())));
+        symbolField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (symbolField.getText() != null && symbolField.getText().length() > 12) {
+                symbolField.setText(symbolField.getText(0, 12));
+            }
+        });
+        companyField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (companyField.getText() != null && companyField.getText().length() > 40) {
+                companyField.setText(companyField.getText(0, 40));
+            }
+        });
+    }
+
+    private boolean checkErrors() {
+        ErrorManager.clearErrorNodes(mainPane);
+        boolean hasErrors = false;
+        if (quantityField.getText() != null && quantityField.getText().equals("0")) {
+            ErrorManager.addError("Negalima pridėti 0-io akcijų!", quantityField, mainPane);
+            hasErrors = true;
+        }
+        if (symbolField.getText() == null || symbolField.getText().isEmpty()) {
+            ErrorManager.addError("Neužpildytas simbolio laukas!", symbolField, mainPane);
+            hasErrors = true;
+        }
+        if (companyField.getText() == null || companyField.getText().isEmpty()) {
+            ErrorManager.addError("Neužpildytas įmonės laukas!", companyField, mainPane);
+            hasErrors = true;
+        }
+        if (quantityField.getText() == null || quantityField.getText().isEmpty()) {
+            ErrorManager.addError("Neužpildytas kiekio laukas!", quantityField, mainPane);
+            hasErrors = true;
+        }
+        if (priceField.getText() == null || priceField.getText().isEmpty()) {
+            ErrorManager.addError("Neužpildytas akcijos kainos laukas!", priceField, mainPane);
+            hasErrors = true;
+        }
+        return hasErrors;
     }
 
     private void updateOverallPrice() {
         if (!quantityField.getText().isEmpty()) {
             BigDecimal quantity;
             try {
-                quantity = BigDecimal.valueOf(Integer.parseInt(quantityField.getText()));
+                quantity = BigDecimal.valueOf(Long.parseLong(quantityField.getText()));
             } catch (NumberFormatException e) {
                 quantity = new BigDecimal(0);
             }
@@ -157,13 +204,6 @@ public class AddStockController {
     }
 
     private boolean saveStock() {
-        if (companyField.getText().isEmpty() ||
-                symbolField.getText().isEmpty() ||
-                priceField.getText().isEmpty() ||
-                quantityField.getText().isEmpty()) {
-            errorMessage.setText("Neužpildyti laukai");
-            return false;
-        }
         StockEntry stockEntry = new StockEntry(
                 -1,
                 companyField.getText(),
@@ -197,7 +237,7 @@ public class AddStockController {
     }
 
     private void onSave(ActionEvent event) {
-        if (saveStock()) {
+        if (!checkErrors() && saveStock()) {
             onClose(event);
         }
     }

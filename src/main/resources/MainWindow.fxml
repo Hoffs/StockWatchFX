@@ -6,50 +6,53 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
-<VBox fx:id="mainBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.ignasm.stockwatch.MainController" spacing="20" styleClass="main-window">
-    <HBox>
-        <HBox prefWidth="80" prefHeight="40" alignment="CENTER_LEFT" styleClass="button-box">
-            <ImageView fx:id="logoImage" />
-        </HBox>
-        <Pane HBox.hgrow="SOMETIMES"/>
-        <VBox spacing="20">
-            <HBox fx:id="menuBox" alignment="CENTER_RIGHT" minHeight="40.0" prefHeight="40.0" spacing="50" styleClass="button-box">
-                <JFXButton fx:id="addStockButton" text="PRIDĖTI AKCIJĄ" styleClass="button-raised" prefWidth="150.0"/>
-                <JFXButton fx:id="helpButton" text="PAGALBA" styleClass="button-raised" prefWidth="150.0"/>
-                <JFXButton fx:id="refreshButton" styleClass="button-raised" prefWidth="50.0">
-                    <graphic>
-                        <FontAwesomeIconView glyphName="REFRESH" glyphSize="16.0"/>
-                    </graphic>
-                </JFXButton>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="mainPane" xmlns="http://javafx.com/javafx/8"
+            fx:controller="com.ignasm.stockwatch.MainController">
+    <VBox fx:id="mainBox" spacing="20" styleClass="main-window">
+        <HBox>
+            <HBox prefWidth="80" prefHeight="40" alignment="CENTER_LEFT" styleClass="button-box">
+                <ImageView fx:id="logoImage"/>
             </HBox>
-            <HBox fx:id="profitsBox" alignment="CENTER_RIGHT" minHeight="40.0" prefHeight="50.0">
-                <VBox fx:id="vProfitsBox" alignment="CENTER_RIGHT" styleClass="data-card, profits-card">
-                    <Label fx:id="profitLabel" text="Pelnas" styleClass="profits-label"/>
-                    <Text fx:id="profitText" text="0.0" styleClass="profits-text"/>
-                </VBox>
-            </HBox>
-        </VBox>
-    </HBox>
-    <VBox fx:id="tableBox" alignment="CENTER_RIGHT" VBox.vgrow="ALWAYS" styleClass="data-card">
-        <HBox fx:id="filterBox" minHeight="60.0" prefHeight="80.0" styleClass="table-filter-box">
-            <Label fx:id="tableLabel" text="Akcijos" alignment="TOP_LEFT" styleClass="table-label"/>
             <Pane HBox.hgrow="SOMETIMES"/>
-            <JFXTextField fx:id="stockFilterField" promptText="Simbolis/Įmonė"/>
-            <JFXDatePicker fx:id="datePickerStart" promptText="Pradžia"/>
-            <JFXDatePicker fx:id="datePickerEnd" promptText="Pabaiga"/>
-            <JFXButton fx:id="filterButton" text="Filtruoti" alignment="TOP_RIGHT" styleClass="filter-button"/>
+            <VBox spacing="20">
+                <HBox fx:id="menuBox" alignment="CENTER_RIGHT" minHeight="40.0" prefHeight="40.0" spacing="50"
+                      styleClass="button-box">
+                    <JFXButton fx:id="addStockButton" text="PRIDĖTI AKCIJĄ" styleClass="button-raised"
+                               prefWidth="150.0"/>
+                    <JFXButton fx:id="helpButton" text="PAGALBA" styleClass="button-raised" prefWidth="150.0"/>
+                    <JFXButton fx:id="refreshButton" styleClass="button-raised" prefWidth="50.0">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="REFRESH" glyphSize="16.0"/>
+                        </graphic>
+                    </JFXButton>
+                </HBox>
+                <HBox fx:id="profitsBox" alignment="CENTER_RIGHT" minHeight="40.0" prefHeight="50.0">
+                    <VBox fx:id="vProfitsBox" alignment="CENTER_RIGHT" styleClass="data-card, profits-card">
+                        <Label fx:id="profitLabel" text="Pelnas" styleClass="profits-label"/>
+                        <Text fx:id="profitText" text="0.0" styleClass="profits-text"/>
+                    </VBox>
+                </HBox>
+            </VBox>
         </HBox>
-        <TableView fx:id="dataTable" VBox.vgrow="ALWAYS" styleClass="data-table">
-            <columns>
-                <TableColumn fx:id="symbolColumn" text="Simbolis"/>
-                <TableColumn fx:id="companyColumn" text="Įmonė"/>
-                <TableColumn fx:id="quantityColumn" text="Kiekis"/>
-                <TableColumn fx:id="priceColumn" text="Kaina"/>
-                <TableColumn fx:id="changeColumn" text="Pokytis"/>
-                <TableColumn fx:id="removeColumn" text="Panaikinti"/>
-            </columns>
-        </TableView>
+        <VBox fx:id="tableBox" alignment="CENTER_RIGHT" VBox.vgrow="ALWAYS" styleClass="data-card">
+            <HBox fx:id="filterBox" minHeight="60.0" prefHeight="80.0" styleClass="table-filter-box">
+                <Label fx:id="tableLabel" text="Akcijos" alignment="TOP_LEFT" styleClass="table-label"/>
+                <Pane HBox.hgrow="SOMETIMES"/>
+                <JFXTextField fx:id="stockFilterField" promptText="Simbolis/Įmonė"/>
+                <JFXDatePicker fx:id="datePickerStart" promptText="Pradžia"/>
+                <JFXDatePicker fx:id="datePickerEnd" promptText="Pabaiga"/>
+                <JFXButton fx:id="filterButton" text="Filtruoti" alignment="TOP_RIGHT" styleClass="filter-button"/>
+            </HBox>
+            <TableView fx:id="dataTable" VBox.vgrow="ALWAYS" styleClass="data-table">
+                <columns>
+                    <TableColumn fx:id="symbolColumn" text="Simbolis"/>
+                    <TableColumn fx:id="companyColumn" text="Įmonė"/>
+                    <TableColumn fx:id="quantityColumn" text="Kiekis"/>
+                    <TableColumn fx:id="priceColumn" text="Kaina"/>
+                    <TableColumn fx:id="changeColumn" text="Pokytis"/>
+                    <TableColumn fx:id="removeColumn" text="Panaikinti"/>
+                </columns>
+            </TableView>
+        </VBox>
     </VBox>
-</VBox>
+</AnchorPane>

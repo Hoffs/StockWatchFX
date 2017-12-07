@@ -3,32 +3,33 @@
 <?import com.jfoenix.controls.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox fx:id="mainBox" xmlns="http://javafx.com/javafx"
+<Pane fx:id="mainPane" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.ignasm.stockwatch.AddStockController">
-    <Label fx:id="errorMessage" textFill="darkred"/>
-    <VBox fx:id="stockSymbolBox">
-        <Label fx:id="symbolLabel" text="Simbolis:" />
-        <JFXTextField fx:id="symbolField" />
+    <VBox fx:id="mainBox" styleClass="root">
+        <VBox fx:id="stockSymbolBox">
+            <Label fx:id="symbolLabel" text="Simbolis:"/>
+            <JFXTextField fx:id="symbolField"/>
+        </VBox>
+        <VBox fx:id="stockCompanyBox">
+            <Label fx:id="companyLabel" text="Įmonė:"/>
+            <JFXTextField fx:id="companyField"/>
+        </VBox>
+        <VBox fx:id="stockPriceBox">
+            <Label fx:id="priceLabel" text="Vienos akcijos kaina:"/>
+            <JFXTextField fx:id="priceField"/>
+        </VBox>
+        <VBox fx:id="stockQuantityBox">
+            <Label fx:id="quantityLabel" text="Kiekis:"/>
+            <JFXTextField fx:id="quantityField"/>
+        </VBox>
+        <VBox fx:id="overallPriceBox">
+            <Label fx:id="overallLabel" text="Bendra kaina:"/>
+            <JFXTextField fx:id="overallField" editable="false"/>
+        </VBox>
+        <HBox fx:id="buttonsBox" alignment="BOTTOM_RIGHT">
+            <JFXButton fx:id="buttonAccept" text="PRIDĖTI"/>
+            <JFXButton fx:id="buttonClose" text="ATŠAUKTI"/>
+        </HBox>
     </VBox>
-    <VBox fx:id="stockCompanyBox">
-        <Label fx:id="companyLabel" text="Įmonė:" />
-        <JFXTextField fx:id="companyField" />
-    </VBox>
-    <VBox fx:id="stockPriceBox">
-        <Label fx:id="priceLabel" text="Akcijos kaina:" />
-        <JFXTextField fx:id="priceField" />
-    </VBox>
-    <VBox fx:id="stockQuantityBox">
-        <Label fx:id="quantityLabel" text="Kiekis:" />
-        <JFXTextField fx:id="quantityField" />
-    </VBox>
-    <VBox fx:id="overallPriceBox">
-        <Label fx:id="overallLabel" text="Bendra kaina:" />
-        <JFXTextField fx:id="overallField" />
-    </VBox>
-    <HBox fx:id="buttonsBox" alignment="BOTTOM_RIGHT">
-        <JFXButton fx:id="buttonAccept" text="PRIDĖTI"/>
-        <JFXButton fx:id="buttonClose" text="ATŠAUKTI"/>
-    </HBox>
-</VBox>
+</Pane>

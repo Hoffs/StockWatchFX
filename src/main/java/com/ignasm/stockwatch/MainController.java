@@ -7,6 +7,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -23,6 +24,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -62,6 +64,7 @@ public class MainController {
     public JFXButton addStockButton;
     public JFXButton helpButton;
     public ImageView logoImage;
+    public Pane mainPane;
 
     private ObservableList<StockPurchaseEntry> activityEntries = FXCollections.observableArrayList();
 
@@ -70,6 +73,11 @@ public class MainController {
 
     @FXML
     public void initialize() {
+        mainBox.prefWidthProperty().bind(mainPane.widthProperty());
+        mainBox.prefHeightProperty().bind(mainPane.heightProperty());
+
+        setupValidation();
+        // datePickerStart.
         // snackbar = new JFXSnackbar(mainBox);
         setupLogoImage();
         setupCss();
@@ -88,6 +96,39 @@ public class MainController {
         helpButton.setOnAction(e -> openHelpWindow());
         StockDataManager.getStockPurchaseEntries();
     }
+
+    private void setupValidation() {
+        datePickerEnd.focusedProperty().addListener(this::checkListener);
+        datePickerStart.focusedProperty().addListener(this::checkListener);
+        filterButton.focusedProperty().addListener(this::checkListener);
+        stockFilterField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (stockFilterField.getText() != null && stockFilterField.getText().length() > 12) {
+                stockFilterField.setText(stockFilterField.getText(0, 12));
+            }
+        });
+    }
+
+    private void checkListener(ObservableValue<? extends Boolean> observable, Boolean oldVal, Boolean newVal) {
+        checkValidationErrors();
+    }
+
+    private void checkValidationErrors() {
+        ErrorManager.clearErrorNodes(mainPane);
+
+        if (datePickerEnd.getValue() != null && datePickerStart.getValue() == null) {
+            ErrorManager.addError("Neįvesta pradžios data!", datePickerStart, mainPane);
+        }
+
+        if (datePickerStart.getValue() != null && datePickerEnd.getValue() == null) {
+            ErrorManager.addError("Neįvesta pabaigos data!", datePickerEnd, mainPane);
+        }
+
+        if (datePickerEnd.getValue() != null && datePickerStart.getValue() != null && datePickerStart.getValue().isAfter(datePickerEnd.getValue())) {
+            ErrorManager.addError("Pradžios data negali būti vėlesnė už pabaigos!", datePickerStart, mainPane);
+        }
+    }
+
+    // private double
 
     private void setupLogoImage() {
         logoImage.setImage(new Image(getClass().getClassLoader().getResourceAsStream("logo120.gif")));
@@ -116,7 +157,7 @@ public class MainController {
         try {
             Stage newStage = new Stage();
             root = FXMLLoader.load(getClass().getClassLoader().getResource("AddStock.fxml"));
-            newStage.setScene(new Scene(root, 300, 360));
+            newStage.setScene(new Scene(root, 300, 370));
             newStage.getScene().getStylesheets().add("stockStylesheet.css");
             newStage.setOnHiding(e -> updateUI());
             newStage.initModality(Modality.APPLICATION_MODAL);
@@ -231,7 +272,7 @@ public class MainController {
     private void updateData() {
         activityEntries.clear();
         StockPurchaseEntry[] purchaseEntries;
-        if (datePickerStart.getValue() != null && datePickerEnd.getValue() != null) {
+        if (datePickerStart.getValue() != null && datePickerEnd.getValue() != null && datePickerEnd.getValue().isAfter(datePickerStart.getValue())) {
             purchaseEntries = StockDataManager.getStockPurchaseEntries(datePickerStart.getValue().toString(), datePickerEnd.getValue().toString());
         } else {
             purchaseEntries = StockDataManager.getStockPurchaseEntries();
