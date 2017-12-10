@@ -42,6 +42,7 @@
                 <JFXDatePicker fx:id="datePickerStart" promptText="Pradžia"/>
                 <JFXDatePicker fx:id="datePickerEnd" promptText="Pabaiga"/>
                 <JFXButton fx:id="filterButton" text="Filtruoti" alignment="TOP_RIGHT" styleClass="filter-button"/>
+                <JFXButton fx:id="resetButton" text="Išvalyti" alignment="TOP_RIGHT" styleClass="filter-button"/>
             </HBox>
             <TableView fx:id="dataTable" VBox.vgrow="ALWAYS" styleClass="data-table">
                 <columns>

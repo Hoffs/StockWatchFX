@@ -65,6 +65,7 @@ public class MainController {
     public JFXButton helpButton;
     public ImageView logoImage;
     public Pane mainPane;
+    public JFXButton resetButton;
 
     private ObservableList<StockPurchaseEntry> activityEntries = FXCollections.observableArrayList();
 
@@ -94,7 +95,15 @@ public class MainController {
         filterButton.setOnAction(e -> updateUI());
         refreshButton.setOnAction(e -> updateSavedStockPrices());
         helpButton.setOnAction(e -> openHelpWindow());
+        resetButton.setOnAction(e -> clearFilters());
         StockDataManager.getStockPurchaseEntries();
+    }
+
+    private void clearFilters() {
+        datePickerStart.setValue(null);
+        datePickerEnd.setValue(null);
+        stockFilterField.setText(null);
+        updateData();
     }
 
     private void setupValidation() {
@@ -285,7 +294,9 @@ public class MainController {
     }
 
     private boolean symbolCompanyFilter(String name) {
-        return stockFilterField.getText().isEmpty() || name.toLowerCase().contains(stockFilterField.getText().toLowerCase());
+        return stockFilterField.getText() == null || (stockFilterField.getText() != null
+                && (name.toLowerCase().contains(stockFilterField.getText().toLowerCase()))
+                || stockFilterField.getText().isEmpty());
     }
 
     private void updateProfit() {
