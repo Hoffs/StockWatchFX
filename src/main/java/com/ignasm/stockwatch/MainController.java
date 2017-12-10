@@ -102,8 +102,8 @@ public class MainController {
         datePickerStart.focusedProperty().addListener(this::checkListener);
         filterButton.focusedProperty().addListener(this::checkListener);
         stockFilterField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (stockFilterField.getText() != null && stockFilterField.getText().length() > 12) {
-                stockFilterField.setText(stockFilterField.getText(0, 12));
+            if (stockFilterField.getText() != null && stockFilterField.getText().length() > 40) {
+                stockFilterField.setText(stockFilterField.getText(0, 40));
             }
         });
     }
